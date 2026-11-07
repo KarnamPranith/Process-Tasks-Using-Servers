@@ -1,0 +1,32 @@
+import heapq
+
+class Solution:
+    def assignTasks(self, servers, tasks):
+        idle = [(w, i) for i, w in enumerate(servers)]
+        heapq.heapify(idle)
+
+        busy = []
+        ans = []
+        time = 0
+
+        for i, task in enumerate(tasks):
+            time = max(time, i)
+
+            while busy and busy[0][0] <= time:
+                t, w, idx = heapq.heappop(busy)
+                heapq.heappush(idle, (w, idx))
+
+            if not idle:
+                time = busy[0][0]
+
+                while busy and busy[0][0] <= time:
+                    t, w, idx = heapq.heappop(busy)
+                    heapq.heappush(idle, (w, idx))
+
+            w, idx = heapq.heappop(idle)
+
+            ans.append(idx)
+
+            heapq.heappush(busy, (time + task, w, idx))
+
+        return ans
